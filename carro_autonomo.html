@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyecto: Carro Autónomo de Largo Alcance (4G)</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <h1>PROYECTO: CARRO AUTÓNOMO DE LARGO ALCANCE</h1>
+        <h2>Monitoreo Remoto 4G y Evitación de Obstáculos</h2>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#descripcion">Descripción</a></li>
+            <li><a href="#arquitectura">Arquitectura</a></li>
+            <li><a href="#componentes">Componentes</a></li>
+            <li><a href="#funcionamiento">Modo de Funcionamiento</a></li>
+            <li><a href="#ventajas">Ventajas y Aplicaciones</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section id="descripcion">
+            <h3>Descripción General y Objetivos</h3>
+            <p>Este proyecto consiste en la construcción de un vehículo robótico de bajo costo diseñado para operar de forma autónoma a largas distancias utilizando la red móvil 4G. El carro es capaz de navegar, evadir obstáculos y transmitir datos de telemetría y video en vivo a un dashboard remoto.</p>
+            
+            <figure class="section-image">
+                <img src="C:\Users\JOSE LUIS\Downloads\Gemini_Generated_Image_95tgl395tgl395tg.png" alt="Vista general del carro autónomo">
+                <figcaption>Vista general del prototipo de carro autónomo.</figcaption>
+            </figure>
+
+            <h4>Objetivos Principales</h4>
+            <ul>
+                <li>Construir un vehículo robótico capaz de moverse de forma autónoma.</li>
+                <li>Implementar un sistema robusto de evitación de obstáculos (ToF).</li>
+                <li>Establecer un canal de comunicación en tiempo real (video + datos) con una laptop a una distancia superior a 500 metros mediante tecnología 4G.</li>
+                <li>Desarrollar un dashboard interactivo para el monitoreo y registro de la misión.</li>
+            </ul>
+        </section>
+
+        <section id="arquitectura">
+            <h3>Arquitectura del Sistema</h3>
+            <pre>
+┌─────────────────────────────────────────┐
+│           CARRO AUTÓNOMO                │
+├─────────────────────────────────────────┤
+│ • Raspberry Pi Zero 2 W (Cerebro)       │
+│ • ESP32-CAM (Video)                     │
+│ • Sensor ToF, GPS, Módulo GSM 4G        │
+└──────────────┬──────────────────────────┘
+               │ Internet 4G
+               │ (Alcance Ilimitado con cobertura)
+               │
+┌──────────────▼──────────────────────────┐
+│        INTERNET / NUBE                  │
+│    (Servidor Flask + SocketIO)          │
+└──────────────┬──────────────────────────┘
+               │
+               │ WiFi/Internet
+               │
+┌──────────────▼──────────────────────────┐
+│         TU LAPTOP                       │
+│   (Dashboard Python + Tkinter)          │
+├─────────────────────────────────────────┤
+│ • Visualización de Video y GPS          │
+│ • Datos de Sensores en Tiempo Real      │
+└─────────────────────────────────────────┘</pre>
+
+            <h4>Comunicación y Protocolo</h4>
+            <p>La Raspberry Pi actúa como servidor usando Flask y SocketIO para enviar los datos por WebSocket en tiempo real. El cliente en la laptop (dashboard Tkinter) recibe un paquete JSON de telemetría cada segundo (1 Hz).</p>
+        </section>
+        
+        <section id="componentes">
+            <h3>Componentes y Presupuesto</h3>
+            
+            <h4>Presupuesto Detallado (Soles - S/)</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Componente</th>
+                        <th>Precio Estimado (S/)</th>
+                        <th>Función Principal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Raspberry Pi Zero 2 W</td><td>S/ 60</td><td>Cerebro del Sistema y Procesamiento.</td></tr>
+                    <tr><td>Módulo GSM/GPRS/4G</td><td>S/ 50</td><td>Conexión remota a la red móvil.</td></tr>
+                    <tr><td>Batería LiPo 12V 3000mAh</td><td>S/ 50</td><td>Alimentación (Autonomía: 60-90 min).</td></tr>
+                    <tr><td>Estructura/Chasis y Hardware</td><td>S/ 50</td><td>Base de Aluminio/Acrílico, ruedas y soportes.</td></tr>
+                    <tr><td>ESP32-CAM</td><td>S/ 45</td><td>Captura y transmisión de video en vivo (VGA).</td></tr>
+                    <tr><td>Motores DC 12V (x2)</td><td>S/ 40</td><td>Tracción diferencial.</td></tr>
+                    <tr><td>GPS NEO-6M</td><td>S/ 26</td><td>Geolocalización y seguimiento de ruta.</td></tr>
+                    <tr><td>Driver L298N</td><td>S/ 15</td><td>Control de potencia y dirección de motores.</td></tr>
+                    <tr><td>Sensor ToF (VL53L0X)</td><td>S/ 13</td><td>Medición de distancia para evitar obstáculos.</td></tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="3">PRESUPUESTO TOTAL ESTIMADO: S/ 349 Soles</th>
+                    </tr>
+                </tfoot>
+            </table>
+            
+        </section>
+        
+        <section id="funcionamiento">
+            <h3>Modo de Funcionamiento y Software</h3>
+            
+            <h4>Flujo de Operación</h4>
+            <ol>
+                <li>Inicio: El carro se enciende, la Pi se conecta automáticamente a Internet vía el Módulo GSM 4G.</li>
+                <li>Servidor y Lectura: El servidor Flask inicia y la Pi comienza a leer datos del ToF, GPS y batería (1 Hz).</li>
+                <li>Monitoreo: La Laptop se conecta al servidor. Los datos de sensores, el mapa GPS y el video se actualizan en el dashboard.</li>
+                <li>Autonomía y Decisión: El carro avanza. Si el Sensor ToF detecta un obstáculo (< 100cm), la Raspberry Pi toma la decisión de detenerse y cambiar la dirección automáticamente, sin intervención humana.</li>
+            </ol>
+            
+            <h4>Software Utilizado</h4>
+            <p>El núcleo del proyecto es Python 3, garantizando un desarrollo ágil y modularidad.</p>
+            <ul>
+                <li>En Carro (Raspberry Pi): Flask y Flask-SocketIO (Servidor en tiempo real), librerías para manejo de sensores como Adafruit_VL53L0X y PySerial.</li>
+                <li>En Laptop (Dashboard): Tkinter (Interfaz Gráfica), SocketIO Client, y Folium (Visualización de mapas GPS).</li>
+            </ul>
+        </section>
+
+        <section id="ventajas">
+            <h3>Ventajas y Aplicaciones Potenciales</h3>
+            <div class="split-content">
+                <div>
+                    <h4>Ventajas Clave del Diseño</h4>
+                    <ul>
+                        <li>Alcance Ilimitado: La dependencia de la red 4G permite que la operación se extienda mucho más allá del alcance típico de Wi-Fi o Bluetooth.</li>
+                        <li>Bajo Costo: Componentes como la Pi Zero 2 W y el chasis simple mantienen el proyecto dentro de un presupuesto ajustado.</li>
+                        <li>Tiempo Real: Baja latencia (100-500ms) para la telemetría, crucial para el monitoreo y la toma de decisiones.</li>
+                        <li>Autonomía: El carro gestiona la navegación y la evitación de obstáculos por sí mismo.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Aplicaciones Potenciales</h4>
+                    <ul>
+                        <li>Proyecto Educativo: Ideal para la enseñanza de robótica, IoT y programación Python avanzada.</li>
+                        <li>Vigilancia y Mapeo: Exploración y registro de datos en terrenos de difícil acceso o zonas industriales.</li>
+                        <li>Logística: Pequeño delivery o transporte en campus universitarios o parques cerrados.</li>
+                        <li>Investigación: Plataforma económica para probar nuevos algoritmos de navegación.</li>
+                    </ul>
+                </div>
+            </div>
+            <figure class="section-image">
+                <img src="C:\Users\JOSE LUIS\Downloads\Gemini_Generated_Image_m5trm1m5trm1m5tr.png" alt="Representación de aplicaciones del carro autónomo">
+                <figcaption>Ejemplos de despliegue en entornos reales.</figcaption>
+            </figure>
+        </section>
+    </main>
+    
+    <section id="conclusion">
+        <h3>Conclusión del Proyecto</h3>
+        <figure class="conclusion-image">
+            <img src="C:\Users\JOSE LUIS\Downloads\FARADAY.jpg" alt="Ilustración de un concepto de ingeniería o robot">
+            <figcaption>Innovación a cada paso.</figcaption>
+        </figure>
+        <blockquote class="cita-famosa">
+
+            “No hay límites para el descubrimiento científico, solo límites para nuestra imaginación.”
+            <footer>— Michael Faraday</footer>
+        </blockquote>
+        <p>Este proyecto del Carro Autónomo de Largo Alcance representa una herramienta versátil y accesible, cuyo valor radica en cómo lo aplicamos. Proporciona una plataforma robusta para la innovación en robótica, demostrando que la ingeniería inteligente puede democratizar el acceso a tecnologías avanzadas y habilitar soluciones creativas para desafíos actuales.</p>
+
+    </section>
+
+    <footer>
+        <p class="resumen-final">
+            "Diseñar el futuro no es predecirlo, es hacerlo posible. Este carro autónomo es un paso más."
+        </p>
+        <p>&copy; 2025 Proyecto Carro Autónomo. Todos los derechos reservados.</p>
+    </footer>
+
+</body>
+</html>
